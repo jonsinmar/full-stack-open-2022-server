@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
-const mongoose = require("mongoose");
 const Contact = require("./models/contact");
 const cors = require("cors");
 
@@ -16,7 +15,7 @@ app.use(express.static("build"));
 app.use(express.json());
 app.use(morgan(":method :url :status :response-time :body"));
 
-app.get("/api/persons", (req, res, nexy) => {
+app.get("/api/persons", (req, res, next) => {
   Contact.find({})
     .then((result) => {
       res.json(result);
@@ -42,7 +41,7 @@ app.get("/api/persons/:id", (req, res, next) => {
 app.delete("/api/persons/:id", (req, res, next) => {
   const id = req.params.id;
   Contact.findByIdAndRemove(id)
-    .then((result) => {
+    .then(() => {
       res.status(204).end();
     })
     .catch((error) => next(error));
@@ -88,11 +87,7 @@ app.put("/api/persons/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.get("/info", (req, res) => {
-  res.send(
-    `<p>Phonebook has info for ${persons.length} people</p><p>${new Date()}</p>`
-  );
-});
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
 };
